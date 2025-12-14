@@ -2,6 +2,7 @@ package com.ayoub.taskmanager_backend.controller;
 
 import com.ayoub.taskmanager_backend.dto.taskdto.CreateTaskRequestDTO;
 import com.ayoub.taskmanager_backend.dto.taskdto.TaskResponseDTO;
+import com.ayoub.taskmanager_backend.dto.taskdto.UpdateTaskRequestDTO;
 import com.ayoub.taskmanager_backend.service.TaskService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,5 +50,14 @@ public class TaskController {
     ) {
         taskService.deleteTask(taskId, userId);
         return ResponseEntity.noContent().build();
+    }
+    @PatchMapping("/{taskId}")
+    public ResponseEntity<TaskResponseDTO> updateTask(
+            @PathVariable int taskId,
+            @RequestHeader("userId") int userId,
+            @RequestBody UpdateTaskRequestDTO dto
+    ) {
+        TaskResponseDTO updated = taskService.updateTask(taskId, userId, dto);
+        return ResponseEntity.ok(updated);
     }
     }

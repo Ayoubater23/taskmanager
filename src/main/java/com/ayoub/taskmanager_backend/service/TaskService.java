@@ -2,6 +2,7 @@ package com.ayoub.taskmanager_backend.service;
 
 import com.ayoub.taskmanager_backend.dto.taskdto.CreateTaskRequestDTO;
 import com.ayoub.taskmanager_backend.dto.taskdto.TaskResponseDTO;
+import com.ayoub.taskmanager_backend.dto.taskdto.UpdateTaskRequestDTO;
 import com.ayoub.taskmanager_backend.model.Project;
 import com.ayoub.taskmanager_backend.model.Task;
 import com.ayoub.taskmanager_backend.repository.ProjectRepository;
@@ -53,6 +54,31 @@ public class TaskService {
         Task updatedTask = taskRepository.save(task);
         return mapToTaskResponseDTO(updatedTask);
     }
+    public TaskResponseDTO updateTask(int taskId, int userId, UpdateTaskRequestDTO dto) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        if (task.getProject().getUser().getId() != userId) {
+            throw new RuntimeException("Access denied");
+        }
+
+        if (dto.title() != null) {
+            task.setTitle(dto.title());
+        }
+        if (dto.description() != null) {
+            task.setDescription(dto.description());
+        }
+        if (dto.dueDate() != null) {
+            task.setDueDate(dto.dueDate());
+        }
+        if (dto.completed() != null) {
+            task.setCompleted(dto.completed());
+        }
+
+        Task updatedTask = taskRepository.save(task);
+        return mapToTaskResponseDTO(updatedTask);
+    }
+
 
     public Project getProjectForUser(int projectId, int userId) {
         Project project = projectRepository.findById(projectId).orElseThrow(()->new RuntimeException("Project not found"));
