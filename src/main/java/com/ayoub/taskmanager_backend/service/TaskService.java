@@ -1,0 +1,73 @@
+package com.ayoub.taskmanager_backend.service;
+
+import com.ayoub.taskmanager_backend.dto.taskdto.CreateTaskRequestDTO;
+import com.ayoub.taskmanager_backend.dto.taskdto.TaskResponseDTO;
+import com.ayoub.taskmanager_backend.model.Project;
+import com.ayoub.taskmanager_backend.model.Task;
+import com.ayoub.taskmanager_backend.repository.ProjectRepository;
+import com.ayoub.taskmanager_backend.repository.TaskRepository;
+import com.ayoub.taskmanager_backend.repository.UserRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+@Service
+public class TaskService {
+    private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
+    private final ProjectRepository projectRepository;
+
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository, ProjectRepository projectRepository) {
+        this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
+        this.projectRepository = projectRepository;
+    }
+    public TaskResponseDTO createTask(int projectId, int userId, CreateTaskRequestDTO dto) {
+        Project project = getProjectForUser(projectId, userId);
+        Task task = new Task(dto.title(),dto.description(),dto.dueDate(),false);
+        task.setProject(project);
+        return mapToTaskResponseDTO(taskRepository.save(task));
+    }
+    public List<TaskResponseDTO> getAllTasks(int projectId, int userId) {
+        Project project = getProjectForUser(projectId, userId);
+        return taskRepository.findByProjectId(project.getId())
+                .stream()
+                .map(this::mapToTaskResponseDTO)
+                .collect(Collectors.toList());
+    }
+    public void  deleteTask(int taskId,int userId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(()-> new RuntimeException("task not found"));
+        if (task.getProject().getUser().getId() != userId) {
+            throw new RuntimeException("Access denied");
+        }
+        taskRepository.delete(task);
+    }
+    public TaskResponseDTO markTaskCompleted(int taskId, int userId){
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(()-> new RuntimeException("task not found"));
+        if (task.getProject().getUser().getId() != userId) {
+            throw new RuntimeException("Access denied");
+        }
+        task.setCompleted(true);
+        Task updatedTask = taskRepository.save(task);
+        return mapToTaskResponseDTO(updatedTask);
+    }
+
+    public Project getProjectForUser(int projectId, int userId) {
+        Project project = projectRepository.findById(projectId).orElseThrow(()->new RuntimeException("Project not found"));
+        if (project.getUser().getId() != userId) {
+            throw new RuntimeException("Access denied");
+        }
+        return project;
+    }
+    public TaskResponseDTO mapToTaskResponseDTO(Task task) {
+        return new TaskResponseDTO(
+                task.getId(),
+                task.getTitle(),
+                task.getDescription(),
+                task.getDueDate(),
+                task.isCompleted()
+        );
+    }
+}
