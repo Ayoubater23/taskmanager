@@ -10,6 +10,7 @@ import com.ayoub.taskmanager_backend.repository.TaskRepository;
 import com.ayoub.taskmanager_backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 @Service
@@ -77,6 +78,24 @@ public class TaskService {
 
         Task updatedTask = taskRepository.save(task);
         return mapToTaskResponseDTO(updatedTask);
+    }
+    public List<TaskResponseDTO> searchTasks(int projectId, int userId, String title, String description,
+                                             Boolean completed, LocalDateTime dueDateFrom, LocalDateTime dueDateTo)
+    {
+        Project project = getProjectForUser(projectId, userId);
+        String safeTitle = (title != null && title.isEmpty()) ? null : title;
+        String safeDescription = (description != null && description.isEmpty()) ? null : description;
+         return taskRepository.searchTasks(
+                    project.getId(),
+                    safeTitle,
+                    safeDescription,
+                    completed,
+                    dueDateFrom,
+                    dueDateTo
+            )
+            .stream()
+            .map(this::mapToTaskResponseDTO)
+            .collect(Collectors.toList());
     }
 
 

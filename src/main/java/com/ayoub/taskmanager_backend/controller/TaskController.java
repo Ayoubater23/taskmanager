@@ -4,9 +4,11 @@ import com.ayoub.taskmanager_backend.dto.taskdto.CreateTaskRequestDTO;
 import com.ayoub.taskmanager_backend.dto.taskdto.TaskResponseDTO;
 import com.ayoub.taskmanager_backend.dto.taskdto.UpdateTaskRequestDTO;
 import com.ayoub.taskmanager_backend.service.TaskService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -59,5 +61,18 @@ public class TaskController {
     ) {
         TaskResponseDTO updated = taskService.updateTask(taskId, userId, dto);
         return ResponseEntity.ok(updated);
+    }
+    @GetMapping("/project/{projectId}/search")
+    public ResponseEntity<List<TaskResponseDTO>> searchTasks(@PathVariable int projectId,
+                                                             @RequestHeader("userId") int userId,
+                                                             @RequestParam(required = false) String title,
+                                                             @RequestParam(required = false) String description,
+                                                             @RequestParam(required = false) Boolean completed,
+                                                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dueDateFrom,
+                                                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dueDateTo
+    )
+    {
+        List<TaskResponseDTO> tasks = taskService.searchTasks(projectId, userId, title, description, completed, dueDateFrom, dueDateTo);
+        return ResponseEntity.ok(tasks);
     }
     }
