@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +52,9 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
         return new LoginResponseDTO(jwtToken,user.getId());
 
+    }
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
 }
