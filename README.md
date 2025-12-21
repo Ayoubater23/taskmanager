@@ -8,9 +8,21 @@ A full-stack project management app with projects and tasks, built with **Java S
 - **Backend:** Java Spring Boot  
 - **Frontend:** React.js (Vite)  
 - **Database:** PostgreSQL (via Docker Compose)  
-- **Other:** Axios for API calls, Tailwind CSS for styling  
+- **Other:** Axios for API calls, Tailwind CSS for styling
+  
+## Project Structure
+
+```bash
+project-root/
+├── backend/       # Spring Boot backend
+├── frontend/      # React frontend (Vite)
+├── docker-compose.yml
+└── README.md
+```
+
 
 ---
+
 
 ## Backend Setup
 1. Navigate to the backend folder:  
@@ -23,6 +35,8 @@ A full-stack project management app with projects and tasks, built with **Java S
 3. Run the backend server:
    ```bash
    ./mvnw spring-boot:run
+The backend will start on:
+http://localhost:8080
 ## Frontend Setup
 1. Navigate to the frontend folder:  
    ```bash
@@ -42,12 +56,17 @@ A full-stack project management app with projects and tasks, built with **Java S
 3. This will automatically create the PostgreSQL container with the credentials and DB name defined in docker-compose.yml.
 4. Ensure your backend application.properties matches these credentials.
 ## Features
--User authentication (login/register)
--Create, view, update, delete projects
--Project search/filter
--Create, update, complete, delete tasks
--Progress tracking per project
--Responsive UI with toast notifications
+- User authentication (login/register)
+- Create, view, update, delete projects  
+- Project search/filter 
+- Create, update, complete, delete tasks
+- Progress tracking per project
+- Responsive UI with toast notifications
+## Notes
+- The database is fully containerized using Docker Compose.
+- Data is persisted even after restarting containers.
+- Backend and frontend communicate via REST APIs.
+
 
   
    
