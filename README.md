@@ -66,6 +66,9 @@ http://localhost:8080
 - The database is fully containerized using Docker Compose.
 - Data is persisted even after restarting containers.
 - Backend and frontend communicate via REST APIs.
+## Demo Video
+**Video link:** https://drive.google.com/drive/folders/1mbOHV8LHkj4KYKt28FDHM62Lf1cXHzNv?usp=drive_link
+
 
 
   
